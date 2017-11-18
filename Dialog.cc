@@ -1,3 +1,4 @@
+#include <QLabel>
 #include <QBoxLayout>
 #include <QFormLayout>
 #include <QPushButton>
@@ -12,8 +13,11 @@ Dialog::Startup::Startup(QWidget *parent):QDialog(parent){
 	setWindowTitle("HangmanQt");
 
 	auto vbox = new QVBoxLayout;
+	auto hbox = new QHBoxLayout;
 	auto play = new QPushButton("Play");
 	auto create = new QPushButton("Create");
+	auto label = new QLabel("Welcome to hangman. You can play the game, or create your own level files.");
+	label->setWordWrap(true);
 
 	QObject::connect(play, &QPushButton::clicked, [this]{
 		QString file = QFileDialog::getOpenFileName(this, "Choose a level pack", "levels", "Level files (*.hlevel)");
@@ -28,8 +32,10 @@ Dialog::Startup::Startup(QWidget *parent):QDialog(parent){
 	});
 
 	setLayout(vbox);
-	vbox->addWidget(play);
-	vbox->addWidget(create);
+	vbox->addWidget(label);
+	vbox->addLayout(hbox);
+	hbox->addWidget(play);
+	hbox->addWidget(create);
 }
 
 std::string Dialog::Startup::get_file()const{
@@ -91,10 +97,15 @@ Dialog::Create::Create(QWidget *parent):QDialog(parent){
 		delete list->takeItem(row);
 	});
 	QObject::connect(save, &QPushButton::clicked, [this]{
-		QString saved = QFileDialog::getSaveFileName(this, "Save this hangman level");
-		if(!saved.isNull()){
-			if(!Hangman::write(saved.toStdString(), levels))
-				QMessageBox::critical(this, "Error", ("Unable to open \"" + saved.toStdString() + "\" in write mode.").c_str());
+		QFileDialog chooser(this);
+		chooser.setAcceptMode(QFileDialog::AcceptSave);
+		chooser.setDefaultSuffix("hlevel");
+		chooser.setWindowTitle("Save this hangman level");
+		chooser.setNameFilter("Hangman levels (*.hlevel)");
+		if(chooser.exec()){
+			std::string saved = chooser.selectedFiles().at(0).toStdString();
+			if(!Hangman::write(saved, levels))
+				QMessageBox::critical(this, "Error", ("Unable to open \"" + saved + "\" in write mode.").c_str());
 			else
 				accept();
 		}
