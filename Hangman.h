@@ -4,6 +4,7 @@
 #include <exception>
 
 #include <QWidget>
+#include <QLabel>
 #include <QDebug>
 
 class HangmanExit:public std::exception{
@@ -28,6 +29,13 @@ public:
 	Hangman();
 	static bool write(const std::string&,const std::vector<HangmanLevel>&);
 	static std::vector<HangmanLevel> read(const std::string&);
+
+private:
+	void next_level();
+
+	std::vector<HangmanLevel> lvls;
+	int levelindex;
+	QLabel *label;
 };
 
 #endif // HANGMAN_H

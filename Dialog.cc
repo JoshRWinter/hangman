@@ -16,7 +16,7 @@ Dialog::Startup::Startup(QWidget *parent):QDialog(parent){
 	auto hbox = new QHBoxLayout;
 	auto play = new QPushButton("Play");
 	auto create = new QPushButton("Create");
-	auto label = new QLabel("Welcome to hangman. You can play the game, or create your own level files.");
+	auto label = new QLabel("Welcome to Hangman. You can play the game, or create your own level files.");
 	label->setWordWrap(true);
 
 	QObject::connect(play, &QPushButton::clicked, [this]{

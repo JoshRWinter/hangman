@@ -1,7 +1,5 @@
 #include <fstream>
 
-#include <QApplication>
-
 #include "Hangman.h"
 #include "Dialog.h"
 
@@ -11,12 +9,17 @@ Hangman::Hangman(){
 	if(!startup.exec())
 		throw HangmanExit();
 
-	std::vector<HangmanLevel> lvls = Hangman::read(startup.get_file());
-	for(const HangmanLevel &level:lvls){
-		qDebug() << "challenge:" << level.challenge.c_str() << ", answer:" << level.answer.c_str() << "\n";
-	}
+	lvls = Hangman::read(startup.get_file());
 
 	setWindowTitle("HangmanQt");
+	resize(600, 500);
+
+	label = new QLabel("ayy");
+	label->setGeometry(0, 0, width(), height());
+	label->setWordWrap(true);
+
+	levelindex = -1;
+	next_level();
 }
 
 std::vector<HangmanLevel> Hangman::read(const std::string &fname){
@@ -59,4 +62,11 @@ bool Hangman::write(const std::string &fname, const std::vector<HangmanLevel> &l
 		out << level.challenge << "|" << level.answer << "\n";
 
 	return true;
+}
+
+void Hangman::next_level(){
+	++levelindex;
+
+	const HangmanLevel &level = lvls.at(levelindex);
+	label->setText(level.challenge.c_str());
 }

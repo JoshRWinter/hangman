@@ -3,14 +3,14 @@
 #include "Hangman.h"
 
 int main(int argc, char **argv){
-	QApplication app(argc, argv);
-
 	try{
+		QApplication app(argc, argv);
+
 		Hangman hangman;
 		hangman.show();
-	}catch(const HangmanExit&){
-		return 0;
-	}
 
-	return app.exec();
+		return app.exec();
+	}catch(const HangmanExit&){
+		return 1;
+	}
 }
