@@ -96,7 +96,12 @@ Dialog::Create::Create(QWidget *parent):QDialog(parent){
 		}
 		delete list->takeItem(row);
 	});
-	QObject::connect(save, &QPushButton::clicked, [this]{
+	QObject::connect(save, &QPushButton::clicked, [this, list]{
+		if(list->count() == 0){
+			QMessageBox::critical(this, "Error", "There are no challenges in this level!");
+			return;
+		}
+
 		QFileDialog chooser(this);
 		chooser.setAcceptMode(QFileDialog::AcceptSave);
 		chooser.setDefaultSuffix("hlevel");
