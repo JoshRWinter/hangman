@@ -17,6 +17,7 @@ Hangman::Hangman(){
 	resize(600, 500);
 
 	label = new QLabel("", this);
+	label->setFont(QFont("ayy", 12));
 	label->setWordWrap(true);
 	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
@@ -49,12 +50,12 @@ void Hangman::paintEvent(QPaintEvent*){
 		return;
 
 	QPainter painter(this);
-	QFont font("NotoSansMono", 40);
+	QFont font("NotoSansMono", 33);
 	QFont font_small("NotoSansMono", 20);
 	painter.setFont(font);
 
-	const int LINE_WIDTH = 50;
-	const int LINE_SPACING = 10;
+	const int LINE_WIDTH = 40;
+	const int LINE_SPACING = 8;
 	const int CHAR_COUNT = lvls[levelindex].answer.length();
 	const int xpos = (width() / 2) - ((CHAR_COUNT * (LINE_SPACING + LINE_WIDTH)) / 2);
 	const int ypos = 450;
@@ -97,7 +98,7 @@ void Hangman::paintEvent(QPaintEvent*){
 
 	// draw the hangy thing
 	painter.setPen(QPen(QBrush(Qt::SolidPattern), 3));
-	const int xoff = 88, yoff = 0; // conveniently change these to easily move hangman dude and apparatus
+	const int xoff = 88, yoff = 30; // conveniently change these to easily move hangman dude and apparatus
 	// pole
 	painter.drawLine(QPoint(xoff + 130, yoff + 50), QPoint(xoff + 130, yoff + 320));
 	// overhang
@@ -115,7 +116,7 @@ void Hangman::paintEvent(QPaintEvent*){
 	if(error == 0)
 		return;
 	// head
-	painter.drawEllipse(xoff + 170, yoff + 80, yoff + 70, 70);
+	painter.drawEllipse(xoff + 170, yoff + 80, 70, 70);
 	if(error == 1) return;
 	// body
 	painter.drawLine(QPoint(xoff + 205, yoff + 150), QPoint(xoff + 205, yoff + 240));
@@ -254,5 +255,5 @@ void Hangman::next_level(){
 
 	const HangmanLevel &level = lvls.at(levelindex);
 	label->setText(("Level " + std::to_string(levelindex + 1) + " of " + std::to_string(lvls.size()) + ": " + level.challenge).c_str());
-	label->setGeometry(0, 0, width(), 500);
+	label->setGeometry(0, 5, width(), 500);
 }

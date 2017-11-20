@@ -1,16 +1,14 @@
 #ifndef HANGMAN_H
 #define HANGMAN_H
 
-#include <exception>
-
 #include <QWidget>
 #include <QLabel>
 #include <QDebug>
 
-#define CHALLENGE_STR_LEN 200
+#define CHALLENGE_STR_LEN 50
 #define CHALLENGE_STR_MIN 5
 #define ANSWER_STR_MIN 3
-#define ANSWER_STR_LEN 8
+#define ANSWER_STR_LEN 12
 #define GUESSES 6
 
 struct HangmanLevel{
