@@ -254,6 +254,6 @@ void Hangman::next_level(){
 	}
 
 	const HangmanLevel &level = lvls.at(levelindex);
-	label->setText(("Level " + std::to_string(levelindex + 1) + " of " + std::to_string(lvls.size()) + ": " + level.challenge).c_str());
+	label->setText(("(" + std::to_string(levelindex + 1) + "/" + std::to_string(lvls.size()) + ") " + level.challenge).c_str());
 	label->setGeometry(0, 5, width(), 500);
 }
