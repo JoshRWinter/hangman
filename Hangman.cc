@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QFontDatabase>
+#include <QTimer>
 
 #include "Hangman.h"
 #include "Dialog.h"
@@ -25,6 +26,7 @@ Hangman::Hangman(){
 	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
 	levelindex = -1;
+	winner = true;
 	next_level();
 }
 
@@ -123,7 +125,7 @@ void Hangman::paintEvent(QPaintEvent*){
 // override
 void Hangman::keyPressEvent(QKeyEvent *event){
 	int key = 'A' + event->key() - 0x41;
-	if(key < Qt::Key_A || key > Qt::Key_Z)
+	if(key < Qt::Key_A || key > Qt::Key_Z || wrong.size() >= GUESSES)
 		return;
 
 	// see if the user already guessed that one
@@ -134,14 +136,43 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 
 	// see if the user got it right
 	if(lvls.at(levelindex).answer.find(key) != std::string::npos){
-		qDebug() << "you got it right!";
+		// right
 		char str[2] = {(char)key, 0};
 		correct.append(str);
+
+		// win check
+		bool win = true;
+		for(const char a:lvls[levelindex].answer){
+			bool found = false;
+			for(const char b:correct){
+				if(a == b){
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+				win = false;
+				break;
+			}
+		}
+		if(win){
+			winner = true;
+			QTimer::singleShot(2500, [this]{
+				QMessageBox::information(this, "You Win!", "noice");
+			});
+		}
 	}
 	else{
-		qDebug() << "you got it wrong!";
+		// wrong
 		char str[2] = {(char)key, 0};
 		wrong.append(str);
+
+		// lose check
+		if(wrong.size() == GUESSES){
+			QTimer::singleShot(2500, [this]{
+				QMessageBox::information(this, "You Lose", "Loooosseerrrr");
+			});
+		}
 	}
 
 	repaint();
@@ -191,6 +222,7 @@ bool Hangman::write(const std::string &fname, const std::vector<HangmanLevel> &l
 
 void Hangman::next_level(){
 	++levelindex;
+	winner = false;
 
 	const HangmanLevel &level = lvls.at(levelindex);
 	label->setText(("Level " + std::to_string(levelindex + 1) + " of " + std::to_string(lvls.size()) + ": " + level.challenge).c_str());

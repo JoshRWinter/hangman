@@ -45,6 +45,7 @@ private:
 	std::string correct;
 	std::vector<HangmanLevel> lvls;
 	int levelindex;
+	bool winner;
 	QLabel *label;
 };
 
