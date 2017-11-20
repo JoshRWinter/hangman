@@ -27,7 +27,7 @@ private:
 
 class Create:public QDialog{
 public:
-	Create(QWidget*);
+	Create(QWidget*, const std::vector<HangmanLevel>&);
 
 private:
 	std::vector<HangmanLevel> levels;
@@ -35,7 +35,7 @@ private:
 
 class Entry:public QDialog{
 public:
-	Entry(QWidget*);
+	Entry(QWidget*, const HangmanLevel&);
 	std::tuple<std::string, std::string> get()const;
 
 private:
