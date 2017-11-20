@@ -126,6 +126,7 @@ Dialog::Create::Create(QWidget *parent):QDialog(parent){
 // level entry dialog
 Dialog::Entry::Entry(QWidget *parent):QDialog(parent){
 	setWindowTitle("Entry for Hangman Level");
+	resize(300, 0);
 
 	auto vbox = new QVBoxLayout;
 	auto hbox = new QHBoxLayout;
@@ -137,7 +138,41 @@ Dialog::Entry::Entry(QWidget *parent):QDialog(parent){
 	auto ok = new QPushButton("OK");
 	auto cancel = new QPushButton("Cancel");
 
-	QObject::connect(ok, &QPushButton::clicked, this, &QDialog::accept);
+	QObject::connect(ok, &QPushButton::clicked, [this]{
+		// disallow pipe delimeter
+		if(challenge->text().toStdString().find("|") != std::string::npos ||
+			answer->text().toStdString().find("|") != std::string::npos){
+			QMessageBox::warning(this, "Error", "The pipe character ('|') is not allowed in challenges or answers!");
+			return;
+		}
+
+		// challenge field max check
+		if(challenge->text().length() > CHALLENGE_STR_LEN){
+			QMessageBox::warning(this, "Error", ("The challenge field is too long (maximum " + std::to_string(CHALLENGE_STR_LEN) + " characters)").c_str());
+			return;
+		}
+
+		// challenge field min check
+		if(challenge->text().length() < CHALLENGE_STR_MIN){
+			QMessageBox::warning(this, "Error", ("The challenge field is too short (minimum " + std::to_string(CHALLENGE_STR_MIN) + " characters)").c_str());
+			return;
+		}
+
+		// answer field max check
+		if(answer->text().length() > ANSWER_STR_LEN){
+			QMessageBox::warning(this, "Error", ("The answer field is too long (maximum " + std::to_string(ANSWER_STR_LEN) + " characters)").c_str());
+			return;
+		}
+
+		// answer field max check
+		if(answer->text().length() < ANSWER_STR_MIN){
+			QMessageBox::warning(this, "Error", ("The answer field is too short (minimum " + std::to_string(ANSWER_STR_MIN) + " characters)").c_str());
+			return;
+		}
+
+		// goood
+		accept();
+	});
 	QObject::connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
 
 	formlayout->addRow("Challenge", challenge);
