@@ -146,7 +146,7 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 
 	// see if the user already guessed that one
 	if(correct.find(key) != std::string::npos || wrong.find(key) != std::string::npos){
-		QMessageBox::warning(this, "Error", "You already guessed that key!");
+		// QMessageBox::warning(this, "Error", "You already guessed that key!");
 		return;
 	}
 
@@ -173,7 +173,7 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 		}
 		if(win){
 			winner = true;
-			QTimer::singleShot(2000, [this]{
+			QTimer::singleShot(1300, [this]{
 				QMessageBox::information(this, "You Win!", "noice");
 				next_level();
 			});
@@ -186,7 +186,7 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 
 		// lose check
 		if(wrong.size() == GUESSES){
-			QTimer::singleShot(2000, [this]{
+			QTimer::singleShot(1300, [this]{
 				QMessageBox::information(this, "You Lose", "Loooosseerrrr");
 				reset();
 			});
