@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QFontDatabase>
 
 #include "Hangman.h"
 #include "Dialog.h"
@@ -30,6 +31,8 @@ Hangman::Hangman(){
 // override
 void Hangman::paintEvent(QPaintEvent*){
 	QPainter painter(this);
+	QFont font("NotoSansMono", 40);
+	painter.setFont(font);
 
 	const int LINE_WIDTH = 50;
 	const int LINE_SPACING = 10;
@@ -37,10 +40,28 @@ void Hangman::paintEvent(QPaintEvent*){
 	const int xpos = (width() / 2) - ((CHAR_COUNT * (LINE_SPACING + LINE_WIDTH)) / 2);
 	const int ypos = 450;
 
+	// draw the letter blanks
 	for(int i = 0; i < CHAR_COUNT; ++i){
 		// draw the lines for the letter blanks
 		const int x = xpos + (i * (LINE_WIDTH + LINE_SPACING));
 		painter.drawLine(QPoint(x, ypos), QPoint(x + LINE_WIDTH, ypos));
+	}
+
+	// draw the correct letters
+	const std::string &answer = lvls.at(levelindex).answer;
+	const QFontMetrics metrics(font);
+	for(unsigned i = 0; i < answer.size(); ++i){
+		const char c = answer.at(i);
+
+		// try to find <c> in the <correct> set
+		for(const char x:correct){
+			if(c == x){
+				const char str[2] = {c, 0};
+				painter.drawText(xpos + (i * (LINE_WIDTH + LINE_SPACING)) + (LINE_WIDTH/2) - (metrics.width(str) / 2), ypos - 5, str);
+
+				break;
+			}
+		}
 	}
 }
 
@@ -49,8 +70,6 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 	int key = 'A' + event->key() - 0x41;
 	if(key < Qt::Key_A || key > Qt::Key_Z)
 		return;
-
-	qDebug() << "key event: " << (char)key;
 
 	// see if the user already guessed that one
 	if(correct.find(key) != std::string::npos || wrong.find(key) != std::string::npos){
@@ -63,15 +82,14 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 		qDebug() << "you got it right!";
 		char str[2] = {(char)key, 0};
 		correct.append(str);
-		return;
 	}
 	else{
 		qDebug() << "you got it wrong!";
 		char str[2] = {(char)key, 0};
 		wrong.append(str);
-		return;
 	}
 
+	repaint();
 }
 
 std::vector<HangmanLevel> Hangman::read(const std::string &fname){
