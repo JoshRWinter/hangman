@@ -7,7 +7,6 @@ int main(int argc, char **argv){
 		QApplication app(argc, argv);
 
 		Hangman hangman;
-		hangman.show();
 
 		return app.exec();
 	}catch(const HangmanExit&){

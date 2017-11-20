@@ -33,6 +33,7 @@ struct HangmanLevel{
 class Hangman:public QWidget{
 public:
 	Hangman();
+	void reset();
 	void paintEvent(QPaintEvent*);
 	void keyPressEvent(QKeyEvent*);
 	static bool write(const std::string&,const std::vector<HangmanLevel>&);

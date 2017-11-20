@@ -11,12 +11,6 @@
 #include "Dialog.h"
 
 Hangman::Hangman(){
-	// run the startup dialog
-	Dialog::Startup startup(this);
-	if(!startup.exec())
-		throw HangmanExit();
-
-	lvls = Hangman::read(startup.get_file());
 
 	setWindowTitle("HangmanQt");
 	resize(600, 500);
@@ -25,9 +19,22 @@ Hangman::Hangman(){
 	label->setWordWrap(true);
 	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
+	reset();
+}
+
+void Hangman::reset(){
+	// run the startup dialog
+	Dialog::Startup startup(this);
+	if(!startup.exec())
+		throw HangmanExit();
+
+	lvls = Hangman::read(startup.get_file());
+
 	levelindex = -1;
 	winner = true;
 	next_level();
+
+	show();
 }
 
 // override
@@ -172,6 +179,7 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 		if(wrong.size() == GUESSES){
 			QTimer::singleShot(2000, [this]{
 				QMessageBox::information(this, "You Lose", "Loooosseerrrr");
+				reset();
 			});
 		}
 	}
@@ -231,6 +239,7 @@ void Hangman::next_level(){
 
 	if(levelindex >= (int)lvls.size()){
 		QMessageBox::information(this, "coolio", "You win everything nice job");
+		reset();
 		return;
 	}
 
