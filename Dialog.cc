@@ -1,3 +1,5 @@
+#include <cctype>
+
 #include <QLabel>
 #include <QBoxLayout>
 #include <QFormLayout>
@@ -58,7 +60,7 @@ std::string Dialog::Startup::get_file()const{
 // create level dialog
 Dialog::Create::Create(QWidget *parent, const std::vector<HangmanLevel> &lvls):QDialog(parent){
 	levels = lvls;
-	setWindowTitle("Create Hangman Level");
+	setWindowTitle("Create/Edit Hangman Level");
 
 	auto vbox = new QVBoxLayout;
 	auto hbox = new QHBoxLayout;
@@ -69,6 +71,7 @@ Dialog::Create::Create(QWidget *parent, const std::vector<HangmanLevel> &lvls):Q
 	auto edit = new QPushButton("Edit");
 	auto remove = new QPushButton("Remove");
 	auto save = new QPushButton("Export");
+	auto cancel = new QPushButton("Cancel");
 
 	add->setToolTip("Add a level");
 	edit->setToolTip("Edit the selected level");
@@ -168,11 +171,13 @@ Dialog::Create::Create(QWidget *parent, const std::vector<HangmanLevel> &lvls):Q
 				accept();
 		}
 	});
+	QObject::connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
 
 	hbox->addWidget(add);
 	hbox->addWidget(edit);
 	hbox->addWidget(remove);
 	hbox->addWidget(save);
+	hbox->addWidget(cancel);
 	vbox->addWidget(list);
 	vbox->addLayout(hbox);
 }
@@ -198,6 +203,15 @@ Dialog::Entry::Entry(QWidget *parent, const HangmanLevel &level):QDialog(parent)
 			answer->text().toStdString().find("|") != std::string::npos){
 			QMessageBox::warning(this, "Error", "The pipe character ('|') is not allowed in challenges or answers!");
 			return;
+		}
+
+		// answer field whitespace check
+		const std::string ans = answer->text().toStdString();
+		for(const auto &c:ans){
+			if(!isalpha(c)){
+				QMessageBox::critical(this, "Error", "Only alphabetic characters are allowed in the answer field");
+				return;
+			}
 		}
 
 		// challenge field max check
