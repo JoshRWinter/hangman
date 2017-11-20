@@ -68,14 +68,56 @@ void Hangman::paintEvent(QPaintEvent*){
 	// draw the error letters
 	const QFontMetrics smallmetrics(font_small);
 	painter.setFont(font_small);
-	int errory = 90; // error y
+	int errory = 95; // error y
 	for(const char c:wrong){
-		const int x = 480;
+		const int x = 380;
 
 		char str[] = {c, 0};
 		painter.drawText(x - (smallmetrics.width(str) / 2), errory, str);
 		errory += smallmetrics.height() + 5;
 	}
+
+	// draw the hangy thing
+	painter.setPen(QPen(QBrush(Qt::SolidPattern), 3));
+	const int xoff = 88, yoff = 0; // conveniently change these to easily move hangman dude and apparatus
+	// pole
+	painter.drawLine(QPoint(xoff + 130, yoff + 50), QPoint(xoff + 130, yoff + 320));
+	// overhang
+	painter.drawLine(QPoint(xoff + 130, yoff + 50), QPoint(xoff + 205, yoff + 50));
+	// hangy thing
+	painter.drawLine(QPoint(xoff + 205, yoff + 50), QPoint(xoff + 205, yoff + 80));
+	// base
+	painter.drawLine(QPoint(xoff + 110, yoff + 320), QPoint(xoff + 150, yoff + 320));
+	painter.drawLine(QPoint(xoff + 110, yoff + 320), QPoint(xoff + 110, yoff + 330));
+	painter.drawLine(QPoint(xoff + 150, yoff + 320), QPoint(xoff + 150, yoff + 330));
+
+	// draw the hangman dude
+	painter.setPen(QPen(QBrush(Qt::SolidPattern), 5));
+	const int error = wrong.size();
+	if(error == 0)
+		return;
+	// head
+	painter.drawEllipse(xoff + 170, yoff + 80, yoff + 70, 70);
+	if(error == 1) return;
+	// body
+	painter.drawLine(QPoint(xoff + 205, yoff + 150), QPoint(xoff + 205, yoff + 240));
+	if(error == 2) return;
+	// left arm
+	painter.drawLine(QPoint(xoff + 205, yoff + 150), QPoint(xoff + 175, yoff + 200));
+	if(error == 3) return;
+	// right arm
+	painter.drawLine(QPoint(xoff + 205, yoff + 150), QPoint(xoff + 235, yoff + 200));
+	if(error == 4) return;
+	// left leg
+	painter.drawLine(QPoint(xoff + 205, yoff + 240), QPoint(xoff + 175, yoff + 300));
+	if(error == 5) return;
+	// right leg
+	painter.drawLine(QPoint(xoff + 205, yoff + 240), QPoint(xoff + 235, yoff + 300));
+	// dead eyes
+	painter.drawLine(QPoint(xoff + 185, yoff + 100), QPoint(xoff + 195, yoff + 110));
+	painter.drawLine(QPoint(xoff + 185, yoff + 110), QPoint(xoff + 195, yoff + 100));
+	painter.drawLine(QPoint(xoff + 215, yoff + 100), QPoint(xoff + 225, yoff + 110));
+	painter.drawLine(QPoint(xoff + 215, yoff + 110), QPoint(xoff + 225, yoff + 100));
 }
 
 // override
