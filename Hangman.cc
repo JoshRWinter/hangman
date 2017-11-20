@@ -32,6 +32,7 @@ Hangman::Hangman(){
 void Hangman::paintEvent(QPaintEvent*){
 	QPainter painter(this);
 	QFont font("NotoSansMono", 40);
+	QFont font_small("NotoSansMono", 20);
 	painter.setFont(font);
 
 	const int LINE_WIDTH = 50;
@@ -62,6 +63,18 @@ void Hangman::paintEvent(QPaintEvent*){
 				break;
 			}
 		}
+	}
+
+	// draw the error letters
+	const QFontMetrics smallmetrics(font_small);
+	painter.setFont(font_small);
+	int errory = 90; // error y
+	for(const char c:wrong){
+		const int x = 480;
+
+		char str[] = {c, 0};
+		painter.drawText(x - (smallmetrics.width(str) / 2), errory, str);
+		errory += smallmetrics.height() + 5;
 	}
 }
 

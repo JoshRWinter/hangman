@@ -9,10 +9,6 @@
 
 #include "Hangman.h"
 
-#define CHALLENGE_STR_LEN 200
-#define CHALLENGE_STR_MIN 5
-#define ANSWER_STR_MIN 3
-#define ANSWER_STR_LEN 8
 namespace Dialog{
 
 class Startup:public QDialog{

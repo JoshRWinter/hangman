@@ -7,6 +7,12 @@
 #include <QLabel>
 #include <QDebug>
 
+#define CHALLENGE_STR_LEN 200
+#define CHALLENGE_STR_MIN 5
+#define ANSWER_STR_MIN 3
+#define ANSWER_STR_LEN 8
+#define GUESSES 6
+
 class HangmanExit:public std::exception{
 public:
 	virtual const char *what()const noexcept{
