@@ -23,6 +23,11 @@ Hangman::Hangman(){
 }
 
 void Hangman::reset(){
+	hide();
+
+	levelindex = -1;
+	winner = false;
+
 	// run the startup dialog
 	Dialog::Startup startup(this);
 	if(!startup.exec())
@@ -30,8 +35,6 @@ void Hangman::reset(){
 
 	lvls = Hangman::read(startup.get_file());
 
-	levelindex = -1;
-	winner = true;
 	next_level();
 
 	show();
@@ -39,6 +42,9 @@ void Hangman::reset(){
 
 // override
 void Hangman::paintEvent(QPaintEvent*){
+	if(levelindex < 0)
+		return;
+
 	QPainter painter(this);
 	QFont font("NotoSansMono", 40);
 	QFont font_small("NotoSansMono", 20);
