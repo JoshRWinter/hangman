@@ -28,12 +28,15 @@ class Hangman:public QWidget{
 public:
 	Hangman();
 	void paintEvent(QPaintEvent*);
+	void keyPressEvent(QKeyEvent*);
 	static bool write(const std::string&,const std::vector<HangmanLevel>&);
 	static std::vector<HangmanLevel> read(const std::string&);
 
 private:
 	void next_level();
 
+	std::string wrong;
+	std::string correct;
 	std::vector<HangmanLevel> lvls;
 	int levelindex;
 	QLabel *label;

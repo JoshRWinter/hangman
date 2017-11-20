@@ -206,7 +206,7 @@ Dialog::Entry::Entry(QWidget *parent, const HangmanLevel &level):QDialog(parent)
 		}
 
 		// answer field whitespace check
-		const std::string ans = answer->text().toStdString();
+		std::string ans = answer->text().toStdString();
 		for(const auto &c:ans){
 			if(!isalpha(c)){
 				QMessageBox::critical(this, "Error", "Only alphabetic characters are allowed in the answer field");
@@ -237,6 +237,11 @@ Dialog::Entry::Entry(QWidget *parent, const HangmanLevel &level):QDialog(parent)
 			QMessageBox::warning(this, "Error", ("The answer field is too short (minimum " + std::to_string(ANSWER_STR_MIN) + " characters)").c_str());
 			return;
 		}
+
+		// convert answer to uppercase
+		for(auto &c:ans)
+			c = toupper(c);
+		answer->setText(ans.c_str());
 
 		// goood
 		accept();
