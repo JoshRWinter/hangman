@@ -42,6 +42,7 @@ void Hangman::reset(){
 	next_level();
 
 	show();
+	setFixedSize(size());
 }
 
 // override
