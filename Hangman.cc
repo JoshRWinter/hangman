@@ -178,7 +178,7 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 			winner = true;
 			QTimer::singleShot(1300, [this]{
 				QMessageBox::information(this, "You Win!", "noice");
-				if(levelindex + 1 == lvls.size()){
+				if(levelindex + 1 == (int)lvls.size()){
 					QMessageBox::information(this, "Coolio", "You win everything nice job");
 					reset();
 					return;
