@@ -1,5 +1,5 @@
 Hangman
-Makefile
+Makefile.qmake
 # C++ objects and libs
 
 *.slo
@@ -30,7 +30,6 @@ qrc_*.cpp
 ui_*.h
 *.qmlc
 *.jsc
-Makefile*
 *build-*
 
 # Qt unit tests
