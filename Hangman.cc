@@ -87,7 +87,7 @@ void Hangman::paintEvent(QPaintEvent*){
 	// draw the error letters
 	const QFontMetrics smallmetrics(font_small);
 	painter.setFont(font_small);
-	int errory = 95; // error y
+	int errory = 105; // error y
 	for(const char c:wrong){
 		const int x = 380;
 
@@ -132,6 +132,7 @@ void Hangman::paintEvent(QPaintEvent*){
 	if(error == 5) return;
 	// right leg
 	painter.drawLine(QPoint(xoff + 205, yoff + 240), QPoint(xoff + 235, yoff + 300));
+	if(error == 6) return;
 	// dead eyes
 	painter.drawLine(QPoint(xoff + 185, yoff + 100), QPoint(xoff + 195, yoff + 110));
 	painter.drawLine(QPoint(xoff + 185, yoff + 110), QPoint(xoff + 195, yoff + 100));
