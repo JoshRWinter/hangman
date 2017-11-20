@@ -1,5 +1,7 @@
 #include <fstream>
 
+#include <QPainter>
+
 #include "Hangman.h"
 #include "Dialog.h"
 
@@ -14,12 +16,28 @@ Hangman::Hangman(){
 	setWindowTitle("HangmanQt");
 	resize(600, 500);
 
-	label = new QLabel("ayy");
-	label->setGeometry(0, 0, width(), height());
+	label = new QLabel("", this);
 	label->setWordWrap(true);
+	label->setAlignment(Qt::AlignHCenter);
 
 	levelindex = -1;
 	next_level();
+}
+
+void Hangman::paintEvent(QPaintEvent*){
+	QPainter painter(this);
+
+	const int LINE_WIDTH = 50;
+	const int LINE_SPACING = 10;
+	const int CHAR_COUNT = lvls[levelindex].answer.length();
+	const int xpos = (width() / 2) - ((CHAR_COUNT * (LINE_SPACING + LINE_WIDTH)) / 2);
+	const int ypos = 250;
+
+	for(int i = 0; i < CHAR_COUNT; ++i){
+		// draw the lines for the letter blanks
+		const int x = xpos + (i * (LINE_WIDTH + LINE_SPACING));
+		painter.drawLine(QPoint(x, ypos), QPoint(x + LINE_WIDTH, ypos));
+	}
 }
 
 std::vector<HangmanLevel> Hangman::read(const std::string &fname){
@@ -69,4 +87,5 @@ void Hangman::next_level(){
 
 	const HangmanLevel &level = lvls.at(levelindex);
 	label->setText(level.challenge.c_str());
+	label->setGeometry(0, 0, width(), 500);
 }

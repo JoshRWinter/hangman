@@ -27,6 +27,7 @@ struct HangmanLevel{
 class Hangman:public QWidget{
 public:
 	Hangman();
+	void paintEvent(QPaintEvent*);
 	static bool write(const std::string&,const std::vector<HangmanLevel>&);
 	static std::vector<HangmanLevel> read(const std::string&);
 
