@@ -137,6 +137,10 @@ Dialog::Create::Create(QWidget *parent, const std::vector<HangmanLevel> &lvls):Q
 		if(list->count() == 0 || list->currentItem() == NULL)
 			return;
 
+		// ask for confirmation
+		if(QMessageBox::question(this, "Remove?", "Confirm Removal?") != QMessageBox::Yes)
+			return;
+
 		// get the selected item
 		const int row = list->currentRow();
 
