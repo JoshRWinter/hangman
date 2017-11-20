@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QFontDatabase>
+#include <QApplication>
 #include <QTimer>
 
 #include "Hangman.h"
@@ -19,7 +20,7 @@ Hangman::Hangman(){
 	label->setWordWrap(true);
 	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-	reset();
+	QTimer::singleShot(1, this, &Hangman::reset);
 }
 
 void Hangman::reset(){
@@ -30,8 +31,10 @@ void Hangman::reset(){
 
 	// run the startup dialog
 	Dialog::Startup startup(this);
-	if(!startup.exec())
-		throw HangmanExit();
+	if(!startup.exec()){
+		QApplication::quit();
+		return;
+	}
 
 	lvls = Hangman::read(startup.get_file());
 
