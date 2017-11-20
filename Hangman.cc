@@ -178,6 +178,11 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 			winner = true;
 			QTimer::singleShot(1300, [this]{
 				QMessageBox::information(this, "You Win!", "noice");
+				if(levelindex + 1 == lvls.size()){
+					QMessageBox::information(this, "Coolio", "You win everything nice job");
+					reset();
+					return;
+				}
 				next_level();
 			});
 		}
@@ -248,12 +253,6 @@ void Hangman::next_level(){
 
 	++levelindex;
 	winner = false;
-
-	if(levelindex >= (int)lvls.size()){
-		QMessageBox::information(this, "coolio", "You win everything nice job");
-		reset();
-		return;
-	}
 
 	const HangmanLevel &level = lvls.at(levelindex);
 	label->setText(("(" + std::to_string(levelindex + 1) + "/" + std::to_string(lvls.size()) + ") " + level.challenge).c_str());

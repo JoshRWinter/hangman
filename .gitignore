@@ -1,4 +1,6 @@
 Hangman
+*.obj
+Hangman.exe
 Makefile.qmake
 # C++ objects and libs
 

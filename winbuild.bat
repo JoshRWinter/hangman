@@ -1,0 +1,1 @@
+cl /EHsc /std:c++17 /I"C:\Qt\5.9.1\msvc2017_64\include" /I"C:\Qt\5.9.1\msvc2017_64\include\QtCore" /I"C:\Qt\5.9.1\msvc2017_64\include\QtGui" /I"C:\Qt\5.9.1\msvc2017_64\include\QtWidgets" *.cc C:\Qt\5.9.1\msvc2017_64\lib\Qt5Core.lib C:\Qt\5.9.1\msvc2017_64\lib\Qt5Widgets.lib C:\Qt\5.9.1\msvc2017_64\lib\Qt5Gui.lib User32.lib /link /out:Hangman.exe
