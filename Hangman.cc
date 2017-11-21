@@ -12,8 +12,6 @@
 #include "Dialog.h"
 
 Hangman::Hangman(){
-
-	setWindowTitle("HangmanQt");
 	resize(600, 500);
 
 	label = new QLabel("", this);
@@ -38,6 +36,7 @@ void Hangman::reset(){
 	}
 
 	lvls = Hangman::read(startup.get_file());
+	setWindowTitle(("\"" + Hangman::truncate(startup.get_file()) + "\" (Press ESC to skip this level)").c_str());
 
 	next_level();
 
@@ -143,6 +142,17 @@ void Hangman::paintEvent(QPaintEvent*){
 
 // override
 void Hangman::keyPressEvent(QKeyEvent *event){
+	if(event->key() == Qt::Key_Escape){
+		if(QMessageBox::question(this, "Confirm skip?", "Are you sure you want to skip this level?") == QMessageBox::Yes){
+			if(levelindex + 1 == (int)lvls.size())
+				reset();
+			else
+				next_level();
+		}
+
+		return;
+	}
+
 	int key = 'A' + event->key() - 0x41;
 	if(key < Qt::Key_A || key > Qt::Key_Z || wrong.size() >= GUESSES)
 		return;
@@ -257,4 +267,21 @@ void Hangman::next_level(){
 	const HangmanLevel &level = lvls.at(levelindex);
 	label->setText(("(" + std::to_string(levelindex + 1) + "/" + std::to_string(lvls.size()) + ") " + level.challenge).c_str());
 	label->setGeometry(0, 5, width(), 500);
+}
+
+std::string Hangman::truncate(const std::string &fname){
+	std::string truncated;
+
+	unsigned long long pos = fname.rfind("/");
+	if(pos == std::string::npos)
+		pos = fname.rfind("\\");
+
+	if(pos != std::string::npos)
+		truncated = fname.substr(pos + 1);
+
+	pos = truncated.rfind(".");
+	if(pos != std::string::npos)
+		truncated = truncated.substr(0, pos);
+
+	return truncated;
 }

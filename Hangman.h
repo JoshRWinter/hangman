@@ -29,6 +29,7 @@ public:
 	void keyPressEvent(QKeyEvent*);
 	static bool write(const std::string&,const std::vector<HangmanLevel>&);
 	static std::vector<HangmanLevel> read(const std::string&);
+	static std::string truncate(const std::string&);
 
 private:
 	void next_level();
