@@ -143,13 +143,10 @@ void Hangman::paintEvent(QPaintEvent*){
 // override
 void Hangman::keyPressEvent(QKeyEvent *event){
 	if(event->key() == Qt::Key_Escape){
-		if(QMessageBox::question(this, "Confirm skip?", "Are you sure you want to skip this level?") == QMessageBox::Yes){
-			if(levelindex + 1 == (int)lvls.size())
-				reset();
-			else
-				next_level();
-		}
-
+		if(levelindex + 1 == (int)lvls.size())
+			reset();
+		else
+			next_level();
 		return;
 	}
 
