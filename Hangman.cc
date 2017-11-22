@@ -12,18 +12,26 @@
 #include "Dialog.h"
 
 Hangman::Hangman(){
+	setWindowTitle("Hangman");
 	resize(600, 500);
 
 	label = new QLabel("", this);
 	label->setFont(QFont("ayy", 12));
 	label->setWordWrap(true);
 	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+	exclamation = new QLabel("", this);
+	exclamation->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+	exclamation->setFont(QFont("ayy", 30, -1, true));
+	exclamation->move(STARTING_X_EXCLAMATION, height() / 2);
 
 	QTimer::singleShot(1, this, &Hangman::reset);
 }
 
 void Hangman::reset(){
 	hide();
+
+	t_time = 0;
+	xoff = STARTING_XOFF;
 
 	levelindex = -1;
 	winner = false;
@@ -36,7 +44,6 @@ void Hangman::reset(){
 	}
 
 	lvls = Hangman::read(startup.get_file());
-	setWindowTitle(("\"" + Hangman::truncate(startup.get_file()) + "\" (Press ESC to skip this level)").c_str());
 
 	next_level();
 
@@ -63,8 +70,8 @@ void Hangman::paintEvent(QPaintEvent*){
 	// draw the letter blanks
 	for(int i = 0; i < CHAR_COUNT; ++i){
 		// draw the lines for the letter blanks
-		const int x = xpos + (i * (LINE_WIDTH + LINE_SPACING));
-		painter.drawLine(QPoint(x, ypos), QPoint(x + LINE_WIDTH, ypos));
+		const int x = xpos + (i * (LINE_WIDTH + LINE_SPACING)) - STARTING_XOFF;
+		painter.drawLine(QPoint(xoff + x, ypos), QPoint(xoff + x + LINE_WIDTH, ypos));
 	}
 
 	// draw the correct letters
@@ -77,7 +84,7 @@ void Hangman::paintEvent(QPaintEvent*){
 		for(const char x:correct){
 			if(c == x){
 				const char str[2] = {c, 0};
-				painter.drawText(xpos + (i * (LINE_WIDTH + LINE_SPACING)) + (LINE_WIDTH/2) - (metrics.width(str) / 2), ypos - 5, str);
+				painter.drawText(xoff + xpos + (i * (LINE_WIDTH + LINE_SPACING)) + (LINE_WIDTH/2) - (metrics.width(str) / 2) - STARTING_XOFF, ypos - 5, str);
 
 				break;
 			}
@@ -89,7 +96,7 @@ void Hangman::paintEvent(QPaintEvent*){
 	painter.setFont(font_small);
 	int errory = 105; // error y
 	for(const char c:wrong){
-		const int x = 380;
+		const int x = xoff + 380;
 
 		char str[] = {c, 0};
 		painter.drawText(x - (smallmetrics.width(str) / 2), errory, str);
@@ -98,7 +105,7 @@ void Hangman::paintEvent(QPaintEvent*){
 
 	// draw the hangy thing
 	painter.setPen(QPen(QBrush(Qt::SolidPattern), 3));
-	const int xoff = 88, yoff = 30; // conveniently change these to easily move hangman dude and apparatus
+	const int yoff = 30; // conveniently change these to easily move hangman dude and apparatus
 	// pole
 	painter.drawLine(QPoint(xoff + 130, yoff + 50), QPoint(xoff + 130, yoff + 320));
 	// overhang
@@ -184,6 +191,7 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 		if(win){
 			winner = true;
 			QTimer::singleShot(1300, [this]{
+				/*
 				QMessageBox::information(this, "You Win!", "noice");
 				if(levelindex + 1 == (int)lvls.size()){
 					QMessageBox::information(this, "Coolio", "You win everything nice job");
@@ -191,6 +199,18 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 					return;
 				}
 				next_level();
+				*/
+
+				if(levelindex + 1 == (int)lvls.size()){
+					QMessageBox::information(this, "Coolio", "You win everything nice job");
+					reset();
+					return;
+				}
+
+				exclamation->setText(Hangman::get_exclamation(wrong.size()));
+				QTimer::singleShot(16, [this]{
+					animate();
+				});
 			});
 		}
 	}
@@ -207,6 +227,31 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 			});
 		}
 	}
+
+	repaint();
+}
+
+void Hangman::animate(){
+	++t_time;
+	const int increment = Hangman::speed(t_time);
+
+	if(t_time == 90){
+		next_level();
+		xoff += 1882;
+	}
+
+	xoff -= increment;
+	QFontMetrics metrics(QFont("ayy", 30, -1, true));
+	exclamation->setGeometry((STARTING_X_EXCLAMATION + xoff) - (metrics.width(exclamation->text()) / 2), height() / 2, metrics.width(exclamation->text()), 45);
+
+	if(increment == 0){
+		// done transitioning
+		xoff = STARTING_XOFF;
+		exclamation->move(STARTING_X_EXCLAMATION, height() / 2);
+		t_time = 0;
+	}
+	else
+		QTimer::singleShot(16, this, &Hangman::animate);
 
 	repaint();
 }
@@ -266,19 +311,34 @@ void Hangman::next_level(){
 	label->setGeometry(0, 5, width(), 500);
 }
 
-std::string Hangman::truncate(const std::string &fname){
-	std::string truncated;
+int Hangman::speed(int time){
+	if(time < 45)
+		return 45 - time;
+	else if(time < 80)
+		return 2;
+	else if(time < 120)
+		return 45 - (time - 75);
+	else
+		return 0;
+}
 
-	unsigned long long pos = fname.rfind("/");
-	if(pos == std::string::npos)
-		pos = fname.rfind("\\");
+const char *Hangman::get_exclamation(int wrong){
+	switch(wrong){
+	case 0:
+		return "Excellent";
+	case 1:
+		return "Nice Job";
+	case 2:
+		return "Noice";
+	case 3:
+		return "Great";
+	case 4:
+		return "Eh. Alright.";
+	case 5:
+		return "You lucky duck";
+	case 6:
+		return "Barely";
+	}
 
-	if(pos != std::string::npos)
-		truncated = fname.substr(pos + 1);
-
-	pos = truncated.rfind(".");
-	if(pos != std::string::npos)
-		truncated = truncated.substr(0, pos);
-
-	return truncated;
+	return "ERROR";
 }

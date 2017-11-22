@@ -11,6 +11,9 @@
 #define ANSWER_STR_LEN 12
 #define GUESSES 7
 
+#define STARTING_XOFF 88
+#define STARTING_X_EXCLAMATION 1272
+
 struct HangmanLevel{
 	HangmanLevel(const std::string &c, const std::string &a)
 	:challenge(c)
@@ -27,9 +30,12 @@ public:
 	void reset();
 	void paintEvent(QPaintEvent*);
 	void keyPressEvent(QKeyEvent*);
+	void animate();
 	static bool write(const std::string&,const std::vector<HangmanLevel>&);
 	static std::vector<HangmanLevel> read(const std::string&);
 	static std::string truncate(const std::string&);
+	static int speed(int);
+	static const char *get_exclamation(int);
 
 private:
 	void next_level();
@@ -39,7 +45,10 @@ private:
 	std::vector<HangmanLevel> lvls;
 	int levelindex;
 	bool winner;
-	QLabel *label;
+	QLabel *label, *exclamation;
+
+	int t_time;
+	int xoff;
 };
 
 #endif // HANGMAN_H
