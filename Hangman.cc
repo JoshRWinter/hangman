@@ -19,10 +19,7 @@ Hangman::Hangman(){
 	label->setFont(QFont("ayy", 12));
 	label->setWordWrap(true);
 	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-	exclamation = new QLabel("", this);
-	exclamation->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-	exclamation->setFont(QFont("ayy", 30, -1, true));
-	exclamation->move(STARTING_X_EXCLAMATION, height() / 2);
+	exclamation = "";
 
 	QTimer::singleShot(1, this, &Hangman::reset);
 }
@@ -102,6 +99,12 @@ void Hangman::paintEvent(QPaintEvent*){
 		painter.drawText(x - (smallmetrics.width(str) / 2), errory, str);
 		errory += smallmetrics.height() + 5;
 	}
+
+	// draw the exclamation
+	QFont f_exclamation("ayy", 30, -1, true);
+	painter.setFont(f_exclamation);
+	QFontMetrics exclamation_metrics(f_exclamation);
+	painter.drawText((STARTING_X_EXCLAMATION + xoff) - (exclamation_metrics.width(exclamation) / 2), (QWidget::height() / 2) - (exclamation_metrics.height() / 2), exclamation);
 
 	// draw the hangy thing
 	painter.setPen(QPen(QBrush(Qt::SolidPattern), 3));
@@ -191,23 +194,13 @@ void Hangman::keyPressEvent(QKeyEvent *event){
 		if(win){
 			winner = true;
 			QTimer::singleShot(1300, [this]{
-				/*
-				QMessageBox::information(this, "You Win!", "noice");
-				if(levelindex + 1 == (int)lvls.size()){
-					QMessageBox::information(this, "Coolio", "You win everything nice job");
-					reset();
-					return;
-				}
-				next_level();
-				*/
-
 				if(levelindex + 1 == (int)lvls.size()){
 					QMessageBox::information(this, "Coolio", "You win everything nice job");
 					reset();
 					return;
 				}
 
-				exclamation->setText(Hangman::get_exclamation(wrong.size()));
+				exclamation = Hangman::get_exclamation(wrong.size());
 				QTimer::singleShot(16, [this]{
 					animate();
 				});
@@ -241,13 +234,10 @@ void Hangman::animate(){
 	}
 
 	xoff -= increment;
-	QFontMetrics metrics(QFont("ayy", 30, -1, true));
-	exclamation->setGeometry((STARTING_X_EXCLAMATION + xoff) - (metrics.width(exclamation->text()) / 2), height() / 2, metrics.width(exclamation->text()), 45);
 
 	if(increment == 0){
 		// done transitioning
 		xoff = STARTING_XOFF;
-		exclamation->move(STARTING_X_EXCLAMATION, height() / 2);
 		t_time = 0;
 	}
 	else

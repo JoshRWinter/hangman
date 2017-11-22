@@ -12,7 +12,7 @@
 #define GUESSES 7
 
 #define STARTING_XOFF 88
-#define STARTING_X_EXCLAMATION 1272
+#define STARTING_X_EXCLAMATION 1265
 
 struct HangmanLevel{
 	HangmanLevel(const std::string &c, const std::string &a)
@@ -33,7 +33,6 @@ public:
 	void animate();
 	static bool write(const std::string&,const std::vector<HangmanLevel>&);
 	static std::vector<HangmanLevel> read(const std::string&);
-	static std::string truncate(const std::string&);
 	static int speed(int);
 	static const char *get_exclamation(int);
 
@@ -45,7 +44,8 @@ private:
 	std::vector<HangmanLevel> lvls;
 	int levelindex;
 	bool winner;
-	QLabel *label, *exclamation;
+	QLabel *label;
+	const char *exclamation;
 
 	int t_time;
 	int xoff;
